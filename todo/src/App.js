@@ -1,37 +1,53 @@
-import { useState } from 'react';
+import { useState, useRef } from "react";
+import "./App.css";
+import Header from "./component/Header";
+import TodoEditor from "./component/TodoEditor";
+import TodoList from "./component/TodoList";
+
+const mockTodo = [
+  {
+    id: 0,
+    isDone: false,
+    content: "React 공부하기",
+    createDate: new Date().getTime(),
+  },
+  {
+    id: 1,
+    isDone: false,
+    content: "빨래 널기",
+    createDate: new Date().getTime(),
+  },
+  {
+    id: 2,
+    isDone: false,
+    content: "노래 연습하기",
+    createDate: new Date().getTime(),
+  },
+];
 
 function App() {
-  const [todo, setTodo] = useState([
-    { id: 1, text: '공부하기', isDone: false },
-    { id: 2, text: '운동하기', isDone: true },
-    { id: 3, text: '청소하기', isDone: false }
-  ]);
 
-  const onUpdate = (targetId) => {
-    setTodo(
-      todo.map((it) =>
-        it.id === targetId ? { ...it, isDone: !it.isDone } : it
-      )
-    );
+  const [todo, setTodo] = useState(mockTodo);
+  const idRef = useRef(3);
+  const onCreate = (content) => {
+    const newItem = {
+      id: idRef.current,
+      content,
+      isDone: false,
+      createdDate: new Date().getTime(),
+    };
+    setTodo([newItem, ...todo]);
+    idRef.current += 1;
   };
 
   return (
-    <div>
-      <h2>📝 할 일 목록</h2>
-      <ul>
-        {todo.map((it) => (
-          <li key={it.id} style={{ marginBottom: 10 }}>
-            <span style={{ textDecoration: it.isDone ? 'line-through' : 'none' }}>
-              {it.text}
-            </span>
-            <button onClick={() => onUpdate(it.id)}>
-              {it.isDone ? ' 되돌리기' : ' 완료'}
-            </button>
-          </li>
-        ))}
-      </ul>
+    <div className="App">
+      <Header />
+      <TodoEditor onCreate={onCreate}/>
+      <TodoList />
     </div>
   );
 }
 
 export default App;
+
